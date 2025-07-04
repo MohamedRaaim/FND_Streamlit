@@ -25,25 +25,41 @@ def get_confidence_color(score, label):
         return 'yellow'
     return 'gray'
 
-def get_display_label(label):
+def get_display_label(label, conf=None):
+    if conf is not None and 50 < conf < 85:
+        return 'Needs Verification'
     if label == 'REAL':
         return 'Likely True'
     if label == 'FAKE':
         return 'Likely Fake'
     return 'Needs Verification'
 
+def map_conf_to_bar(conf):
+    if conf <= 50:
+        # Red segment: 0-50% confidence maps to 0-50% of bar
+        return conf
+    elif conf <= 85:
+        # Yellow segment: 50-85% confidence maps to 50-85% of bar
+        # 35% confidence range maps to 35% of bar (from 50% to 85%)
+        return 50 + ((conf - 50) / 35) * 35
+    else:
+        # Green segment: 85-100% confidence maps to 85-100% of bar
+        # 15% confidence range maps to 15% of bar (from 85% to 100%)
+        return 85 + ((conf - 85) / 15) * 15
+
 def confidence_bar(conf, label):
     color = get_confidence_color(conf, label)
+    bar_pos = map_conf_to_bar(conf)
     bar_html = f"""
     <div style='width: 80%; margin: 16px 0;'>
       <div style='position: relative; height: 32px; width: 100%;'>
         <div style='position: absolute; left: 0; top: 12px; height: 8px; width: 100%; border-radius: 4px; background: linear-gradient(to right, red 0%, red 50%, yellow 50%, yellow 85%, green 85%, green 100%);'></div>
-        <div style='position: absolute; left: {conf}%; top: 8px; transform: translateX(-50%); z-index: 2;'>
+        <div style='position: absolute; left: {bar_pos}%; top: 8px; transform: translateX(-50%); z-index: 2;'>
           <span style='font-size: 22px; color: #fff; text-shadow: 0 0 2px #222;'>▲</span>
         </div>
       </div>
       <div style='text-align: center; margin-top: 2px; font-size: 13px; font-weight: bold;'>
-        Confidence: {conf:.1f}% | Label: {get_display_label(label)}
+        Confidence: {conf:.1f}% | Label: {get_display_label(label, conf)}
       </div>
     </div>
     """
@@ -72,7 +88,7 @@ if st.button('Analyze'):
                     label = result.get('label', 'UNKNOWN')
                     conf = result.get('confidence_score', 0)
                     color = get_confidence_color(conf, label)
-                    label_text = get_display_label(label)
+                    label_text = get_display_label(label, conf)
                     st.markdown(f"<span style='color:{color};font-weight:bold'>{label_text}</span> <span style='color:gray'>(Confidence: {conf:.1f}%)</span>", unsafe_allow_html=True)
                     confidence_bar(conf, label)
                     st.write('---')
