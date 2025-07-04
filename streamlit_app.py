@@ -38,11 +38,8 @@ def confidence_bar(conf, label):
     <div style='width: 80%; margin: 16px 0;'>
       <div style='position: relative; height: 32px; width: 100%;'>
         <div style='position: absolute; left: 0; top: 12px; height: 8px; width: 100%; border-radius: 4px; background: linear-gradient(to right, red 0%, red 50%, yellow 50%, yellow 85%, green 85%, green 100%);'></div>
-        <div style='position: absolute; left: 0; top: 0; width: 100%; display: flex; justify-content: space-between; font-size: 12px; color: #222;'>
-          <span>0<br>Fake</span><span>100<br>Fake<br>0<br>Real</span><span>100<br>Real</span>
-        </div>
         <div style='position: absolute; left: {conf}%; top: 8px; transform: translateX(-50%); z-index: 2;'>
-          <span style='font-size: 22px; color: #222;'>▲</span>
+          <span style='font-size: 22px; color: #fff; text-shadow: 0 0 2px #222;'>▲</span>
         </div>
       </div>
       <div style='text-align: center; margin-top: 2px; font-size: 13px; font-weight: bold;'>
