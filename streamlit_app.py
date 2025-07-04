@@ -93,7 +93,8 @@ if st.button('Analyze'):
                     conf = result.get('confidence_score', 0)
                     color = get_confidence_color(conf, label)
                     label_text = get_display_label(label, conf)
-                    st.markdown(f"<span style='color:{color};font-weight:bold'>{label_text}</span> <span style='color:gray'>(Confidence: {conf:.1f}%)</span>", unsafe_allow_html=True)
+                    bar_conf = get_bar_confidence(conf, label)
+                    st.markdown(f"<span style='color:{color};font-weight:bold'>{label_text}</span> <span style='color:gray'>(Confidence: {bar_conf:.1f}%)</span>", unsafe_allow_html=True)
                     confidence_bar(conf, label)
                     st.write('---')
             else:
