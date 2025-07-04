@@ -35,17 +35,15 @@ def get_display_label(label, conf=None):
     return 'Needs Verification'
 
 def map_conf_to_bar(conf):
+    # 0-50% confidence: 0-50% of bar (red, 50% width)
+    # 50-85% confidence: 50-85% of bar (yellow, 35% width)
+    # 85-100% confidence: 85-100% of bar (green, 15% width)
     if conf <= 50:
-        # Red segment: 0-50% confidence maps to 0-50% of bar
-        return conf
+        return (conf / 50) * 50  # 0-50% confidence -> 0-50% bar
     elif conf <= 85:
-        # Yellow segment: 50-85% confidence maps to 50-85% of bar
-        # 35% confidence range maps to 35% of bar (from 50% to 85%)
-        return 50 + ((conf - 50) / 35) * 35
+        return 50 + ((conf - 50) / 35) * 35  # 50-85% confidence -> 50-85% bar
     else:
-        # Green segment: 85-100% confidence maps to 85-100% of bar
-        # 15% confidence range maps to 15% of bar (from 85% to 100%)
-        return 85 + ((conf - 85) / 15) * 15
+        return 85 + ((conf - 85) / 15) * 15  # 85-100% confidence -> 85-100% bar
 
 def confidence_bar(conf, label):
     color = get_confidence_color(conf, label)
