@@ -18,10 +18,22 @@ user_input = st.text_area('News Snippet', height=200)
 def group_sentences(sentences, n=3):
     return [' '.join(sentences[i:i+n]) for i in range(0, len(sentences), n)]
 
+def get_confidence_color(score, label):
+    if score >= 85:
+        return 'green' if label == 'REAL' else 'red'
+    if score > 50:
+        return 'yellow'
+    return 'gray'
+
+def get_display_label(label):
+    if label == 'REAL':
+        return 'Likely True'
+    if label == 'FAKE':
+        return 'Likely Fake'
+    return 'Needs Verification'
+
 def confidence_bar(conf, label):
-    # conf: 0-100
-    # Bar: red (0-50), yellow (50-85), green (85-100)
-    # Marker at conf
+    color = get_confidence_color(conf, label)
     bar_html = f"""
     <div style='width: 80%; margin: 16px 0;'>
       <div style='position: relative; height: 32px; width: 100%;'>
@@ -34,7 +46,7 @@ def confidence_bar(conf, label):
         </div>
       </div>
       <div style='text-align: center; margin-top: 2px; font-size: 13px; font-weight: bold;'>
-        Confidence: {conf:.1f}% | Label: {label}
+        Confidence: {conf:.1f}% | Label: {get_display_label(label)}
       </div>
     </div>
     """
@@ -62,10 +74,10 @@ if st.button('Analyze'):
                     st.markdown(f"{groups[idx]}")
                     label = result.get('label', 'UNKNOWN')
                     conf = result.get('confidence_score', 0)
-                    color = 'green' if label == 'REAL' else ('red' if label == 'FAKE' else 'orange')
-                    label_text = 'Likely True' if label == 'REAL' else ('Likely Fake' if label == 'FAKE' else 'Needs Verification')
+                    color = get_confidence_color(conf, label)
+                    label_text = get_display_label(label)
                     st.markdown(f"<span style='color:{color};font-weight:bold'>{label_text}</span> <span style='color:gray'>(Confidence: {conf:.1f}%)</span>", unsafe_allow_html=True)
-                    confidence_bar(conf, label_text)
+                    confidence_bar(conf, label)
                     st.write('---')
             else:
                 st.error(f'API Error: {response.status_code} - {response.text}')
