@@ -3,7 +3,7 @@ import requests
 import re
 
 st.title('Fake News Detector')
-st.write('Enter a news snippet below. Every 3 sentences will be grouped and analyzed together.')
+st.write('Enter a news snippet below.')
 
 # Sidebar legend
 st.sidebar.markdown('''
