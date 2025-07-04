@@ -42,9 +42,18 @@ def map_conf_to_bar(conf, label):
     else:
         return 50  # Center for 'Needs Verification' or unknown
 
+def get_bar_confidence(conf, label):
+    if label == 'FAKE':
+        return conf / 2
+    elif label == 'REAL':
+        return (conf / 2) + 50
+    else:
+        return 50
+
 def confidence_bar(conf, label):
     color = get_confidence_color(conf, label)
     bar_pos = map_conf_to_bar(conf, label)
+    bar_conf = get_bar_confidence(conf, label)
     bar_html = f"""
     <div style='width: 80%; margin: 16px 0;'>
       <div style='position: relative; height: 32px; width: 100%;'>
@@ -54,7 +63,7 @@ def confidence_bar(conf, label):
         </div>
       </div>
       <div style='text-align: center; margin-top: 2px; font-size: 13px; font-weight: bold;'>
-        Confidence: {conf:.1f}% | Label: {get_display_label(label, conf)}
+        Bar Confidence: {bar_conf:.1f}% | Model Confidence: {conf:.1f}% | Label: {get_display_label(label, conf)}
       </div>
     </div>
     """
