@@ -34,20 +34,17 @@ def get_display_label(label, conf=None):
         return 'Likely Fake'
     return 'Needs Verification'
 
-def map_conf_to_bar(conf):
-    # 0-50% confidence: 0-50% of bar (red, 50% width)
-    # 50-85% confidence: 50-85% of bar (yellow, 35% width)
-    # 85-100% confidence: 85-100% of bar (green, 15% width)
-    if conf <= 50:
-        return (conf / 50) * 50  # 0-50% confidence -> 0-50% bar
-    elif conf <= 85:
-        return 50 + ((conf - 50) / 35) * 35  # 50-85% confidence -> 50-85% bar
+def map_conf_to_bar(conf, label):
+    if label == 'FAKE':
+        return conf / 2  # 0-100% confidence -> 0-50% of bar
+    elif label == 'REAL':
+        return (conf / 2) + 50  # 0-100% confidence -> 50-100% of bar
     else:
-        return 85 + ((conf - 85) / 15) * 15  # 85-100% confidence -> 85-100% bar
+        return 50  # Center for 'Needs Verification' or unknown
 
 def confidence_bar(conf, label):
     color = get_confidence_color(conf, label)
-    bar_pos = map_conf_to_bar(conf)
+    bar_pos = map_conf_to_bar(conf, label)
     bar_html = f"""
     <div style='width: 80%; margin: 16px 0;'>
       <div style='position: relative; height: 32px; width: 100%;'>
